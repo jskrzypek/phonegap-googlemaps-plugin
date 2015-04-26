@@ -1,0 +1,36 @@
+{
+  "name": "phonegap-googlemaps-plugin",
+  "version": "1.2.6",
+  "description": "Google Maps native SDK for Android and iOS",
+  "cordova": {
+    "id": "plugin.google.maps",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jskrzypek/phonegap-googlemaps-plugin.git"
+  },
+  "keywords": [
+    "google",
+    "maps",
+    "geo",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.5.0"
+    }
+  ],
+  "author": "jskrzypek",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/jskrzypek/phonegap-googlemaps-plugin/issues"
+  },
+  "homepage": "https://github.com/jskrzypek/phonegap-googlemaps-plugin#readme"
+}
