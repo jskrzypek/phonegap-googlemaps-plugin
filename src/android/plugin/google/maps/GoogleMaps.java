@@ -12,7 +12,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginResult;
-import org.apache.cordova.ScrollEvent;
+// import org.apache.cordova.ScrollEvent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,6 +47,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -546,6 +547,36 @@ public class GoogleMaps extends CordovaPlugin implements OnMarkerClickListener,
       }
       options.camera(builder.build());
     }
+
+
+    final ViewTreeObserver.OnScrollChangedListener scrollListener = new ViewTreeObserver.OnScrollChangedListener() {
+      // @Override
+      public void onScrollChanged(int l, int t, int oldl, int oldt) {
+        
+        if (mPluginLayout != null) {
+          mPluginLayout.scrollTo(oldl, oldt);
+          if (mapDivLayoutJSON != null) {
+            try {
+              float divW = contentToView(mapDivLayoutJSON.getLong("width"));
+              float divH = contentToView(mapDivLayoutJSON.getLong("height"));
+              float divLeft = contentToView(mapDivLayoutJSON.getLong("left"));
+              float divTop = contentToView(mapDivLayoutJSON.getLong("top"));
+      
+              mPluginLayout.setDrawingRect(
+                  divLeft,
+                  divTop - oldt, 
+                  divLeft + divW, 
+                  divTop + divH - oldt);
+            } catch (JSONException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+    };
+
+    webView.getView().getViewTreeObserver().addOnScrollChangedListener(scrollListener);
+
     
     mapView = new MapView(activity, options);
     mapView.onCreate(null);
@@ -651,45 +682,73 @@ public class GoogleMaps extends CordovaPlugin implements OnMarkerClickListener,
     return true;
   }
 
-  @Override
-  public Object onMessage(String id, Object data) {
-    EVENTS event = null;
-    try {
-      event = EVENTS.valueOf(id);
-    }catch(Exception e) {}
+  // @Override
+  // public Object onMessage(String id, Object data) {
+  //   EVENTS event = null;
+  //   try {
+  //     event = EVENTS.valueOf(id);
+  //   }catch(Exception e) {}
     
-    if (event == null) {
-      return null;
-    }
+  //   if (event == null) {
+  //     return null;
+  //   }
     
-    switch(event) {
-    case onScrollChanged:
-      ScrollEvent scrollEvent = (ScrollEvent)data;
-      if (mPluginLayout != null) {
-        mPluginLayout.scrollTo(scrollEvent.nl, scrollEvent.nt);
-        if (mapDivLayoutJSON != null) {
-          try {
-            float divW = contentToView(mapDivLayoutJSON.getLong("width"));
-            float divH = contentToView(mapDivLayoutJSON.getLong("height"));
-            float divLeft = contentToView(mapDivLayoutJSON.getLong("left"));
-            float divTop = contentToView(mapDivLayoutJSON.getLong("top"));
+  //   switch(event) {
+  //   case onScrollChanged:
+  //     ScrollEvent scrollEvent = (ScrollEvent)data;
+  //     if (mPluginLayout != null) {
+  //       mPluginLayout.scrollTo(scrollEvent.nl, scrollEvent.nt);
+  //       if (mapDivLayoutJSON != null) {
+  //         try {
+  //           float divW = contentToView(mapDivLayoutJSON.getLong("width"));
+  //           float divH = contentToView(mapDivLayoutJSON.getLong("height"));
+  //           float divLeft = contentToView(mapDivLayoutJSON.getLong("left"));
+  //           float divTop = contentToView(mapDivLayoutJSON.getLong("top"));
     
-            mPluginLayout.setDrawingRect(
-                divLeft,
-                divTop - scrollEvent.nt, 
-                divLeft + divW, 
-                divTop + divH - scrollEvent.nt);
-          } catch (JSONException e) {
-            e.printStackTrace();
-          }
-        }
-      }
+  //           mPluginLayout.setDrawingRect(
+  //               divLeft,
+  //               divTop - scrollEvent.nt, 
+  //               divLeft + divW, 
+  //               divTop + divH - scrollEvent.nt);
+  //         } catch (JSONException e) {
+  //           e.printStackTrace();
+  //         }
+  //       }
+  //     }
       
-      break;
-    }
+  //     break;
+  //   }
     
-    return null;
-  }
+  //   return null;
+  // }
+
+  // webView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+  //     @Override
+  //     public void onScrollChanged(int l, int t, int oldl, int oldt) {
+        
+  //       if (mPluginLayout != null) {
+  //         mPluginLayout.scrollTo(oldl, oldt);
+  //         if (mapDivLayoutJSON != null) {
+  //           try {
+  //             float divW = contentToView(mapDivLayoutJSON.getLong("width"));
+  //             float divH = contentToView(mapDivLayoutJSON.getLong("height"));
+  //             float divLeft = contentToView(mapDivLayoutJSON.getLong("left"));
+  //             float divTop = contentToView(mapDivLayoutJSON.getLong("top"));
+      
+  //             mPluginLayout.setDrawingRect(
+  //                 divLeft,
+  //                 divTop - oldt, 
+  //                 divLeft + divW, 
+  //                 divTop + divH - oldt);
+  //           } catch (JSONException e) {
+  //             e.printStackTrace();
+  //           }
+  //         }
+  //       }
+      
+  //       return null;
+  //     }
+  // });
 
   /*
   @SuppressWarnings("unused")
